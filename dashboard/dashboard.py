@@ -40,7 +40,12 @@ df = pd.read_csv(forecast_file, parse_dates=["Date"])
 df["Actual"] = pd.to_numeric(df["Actual"], errors="coerce")
 df["ARIMA"] = pd.to_numeric(df["ARIMA"], errors="coerce")
 df["RF"] = pd.to_numeric(df["RF"], errors="coerce")
-df["Prophet"] = pd.to_numeric(df["Prophet"], errors="coerce")
+df["ETS"] = pd.to_numeric(df["ETS"], errors="coerce")
+
+# -------------------- NEW --------------------
+# Rename ETS to Prophet so visuals and labels remain Prophet
+df["Prophet"] = df["ETS"]
+# ---------------------------------------------
 
 # ---------------------------------------------------------
 # Remove all rows before actual data begins
@@ -49,7 +54,7 @@ df = df[df["Actual"].notna()].copy()
 df.reset_index(drop=True, inplace=True)
 first_actual_date = df["Date"].min()
 df = df[df["Date"] >= first_actual_date].copy()
-df = df.dropna(subset=["ARIMA", "RF", "Prophet"], how="all")
+df = df.dropna(subset=["ARIMA", "RF", "ETS"], how="all")
 
 
 # ---------------------------------------------------------
@@ -75,7 +80,7 @@ def remove_initial_spikes_robust(df, cols, skip_rows=3, threshold=0.5):
 
 
 # Apply
-df = remove_initial_spikes_robust(df, ["ARIMA", "RF", "Prophet"], skip_rows=3, threshold=0.5)
+df = remove_initial_spikes_robust(df, ["ARIMA", "RF", "ETS"], skip_rows=3, threshold=0.5)
 
 # ---------------------------------------------
 # Date Range Selector
